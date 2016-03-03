@@ -27,8 +27,8 @@ class rdamage(minqlx.Plugin):
         try:
             gt = self.game.type_short
             if gt not in SUPPORTED_GAMETYPES:
-                return minqlx.RET_STOP_ALL
                 self.game_supported = False
+                return minqlx.RET_STOP_ALL
         except AttributeError:
             return minqlx.RET_STOP_ALL
 
