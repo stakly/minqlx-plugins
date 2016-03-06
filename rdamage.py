@@ -3,6 +3,7 @@
 #
 # This plugin displays end round damage statistic and best round damager
 # Supported gametypes: clanarena, domination, freezetag
+# test
 
 import minqlx
 from collections import defaultdict
