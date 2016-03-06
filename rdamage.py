@@ -57,7 +57,10 @@ class rdamage(minqlx.Plugin):
             return minqlx.RET_STOP
 
         if not data['WARMUP']:
-            self.allplayers[killer.name]['frags'] += 1
+            try:
+                self.allplayers[killer.name]['frags'] += 1
+            except KeyError:
+                return minqlx.RET_STOP
 
     def handle_round_end(self, data):
         if not self.game_supported:
