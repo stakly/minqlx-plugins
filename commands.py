@@ -2,7 +2,6 @@
 # Copyright (c) 2016 stakly
 #
 # This plugin response permitted command list to player, based on currently loaded plugins in markdown
-# test
 
 import minqlx
 
