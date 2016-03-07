@@ -7,7 +7,7 @@
 import minqlx
 from collections import defaultdict
 
-VERSION = 'v0.2'
+VERSION = 'v0.3'
 SUPPORTED_GAMETYPES = ('ca', 'dom', 'ft')
 
 
@@ -41,16 +41,18 @@ class rdamage(minqlx.Plugin):
         blue_start = teams['blue'].copy()
 
         for p in red_start:
-            self.allplayers[p.name] = {}
-            self.allplayers[p.name]['team'] = 'red'
-            self.allplayers[p.name]['damage'] = p.stats.damage_dealt
-            self.allplayers[p.name]['frags'] = 0
+            self.allplayers[p.steam_id] = {}
+            self.allplayers[p.steam_id]['name'] = p.clean_name
+            self.allplayers[p.steam_id]['team'] = 'red'
+            self.allplayers[p.steam_id]['damage'] = p.stats.damage_dealt
+            self.allplayers[p.steam_id]['frags'] = 0
 
         for p in blue_start:
-            self.allplayers[p.name] = {}
-            self.allplayers[p.name]['team'] = 'blue'
-            self.allplayers[p.name]['damage'] = p.stats.damage_dealt
-            self.allplayers[p.name]['frags'] = 0
+            self.allplayers[p.steam_id] = {}
+            self.allplayers[p.steam_id]['name'] = p.clean_name
+            self.allplayers[p.steam_id]['team'] = 'blue'
+            self.allplayers[p.steam_id]['damage'] = p.stats.damage_dealt
+            self.allplayers[p.steam_id]['frags'] = 0
 
     def handle_kill(self, victim, killer, data):
         if not self.game_supported:
@@ -58,7 +60,7 @@ class rdamage(minqlx.Plugin):
 
         if not data['WARMUP']:
             try:
-                self.allplayers[killer.name]['frags'] += 1
+                self.allplayers[killer.steam_id]['frags'] += 1
             except KeyError:
                 return minqlx.RET_STOP
 
@@ -73,37 +75,37 @@ class rdamage(minqlx.Plugin):
         try:
             self.msg('^1RED SCORES: {}, PLAYERS ROUND DAMAGE:'.format(self.game.red_score))
             for p in red_end:
-                frags = self.allplayers[p.name]['frags']
+                frags = self.allplayers[p.steam_id]['frags']
                 frags_msg = ''
                 if frags > 0:
                     end = 'S' if frags > 1 else ''
                     frags_msg = ' ({} FRAG{})'.format(frags, end)
-                self.allplayers[p.name]['damage'] = p.stats.damage_dealt-self.allplayers[p.name]['damage']
-                if self.allplayers[p.name]['damage'] >= 0:
-                    self.msg('^1  {0:<15} ^1: ^1{1}{2}'.format(p.name, self.allplayers[p.name]['damage'], frags_msg))
+                self.allplayers[p.steam_id]['damage'] = p.stats.damage_dealt-self.allplayers[p.steam_id]['damage']
+                if self.allplayers[p.steam_id]['damage'] >= 0:
+                    self.msg('^1  {0:<15} ^1: ^1{1}{2}'.format(p.clean_name, self.allplayers[p.steam_id]['damage'], frags_msg))
         except AttributeError:
             return minqlx.RET_STOP
 
         try:
             self.msg('^4BLUE SCORES: {}, PLAYERS ROUND DAMAGE:'.format(self.game.blue_score))
             for p in blue_end:
-                frags = self.allplayers[p.name]['frags']
+                frags = self.allplayers[p.steam_id]['frags']
                 frags_msg = ''
                 if frags > 0:
                     end = 'S' if frags > 1 else ''
                     frags_msg = ' ({} FRAG{})'.format(frags, end)
-                self.allplayers[p.name]['damage'] = p.stats.damage_dealt-self.allplayers[p.name]['damage']
-                if self.allplayers[p.name]['damage'] >= 0:
-                    self.msg('^4  {0:<15} ^4: ^4{1}{2}'.format(p.name, self.allplayers[p.name]['damage'], frags_msg))
+                self.allplayers[p.steam_id]['damage'] = p.stats.damage_dealt-self.allplayers[p.steam_id]['damage']
+                if self.allplayers[p.steam_id]['damage'] >= 0:
+                    self.msg('^4  {0:<15} ^4: ^4{1}{2}'.format(p.clean_name, self.allplayers[p.steam_id]['damage'], frags_msg))
         except AttributeError:
             return minqlx.RET_STOP
 
-        n1player = next(iter (sorted(self.allplayers.items(), key=lambda x: x[1]['damage'], reverse=True)))
+        leader = next(iter (sorted(self.allplayers.items(), key=lambda x: x[1]['damage'], reverse=True)))
         self.allplayers.clear()
 
-        nickname = n1player[0]
-        damage = n1player[1]['damage']
-        team = n1player[1]['team']
+        nickname = leader[1]['name']
+        damage = leader[1]['damage']
+        team = leader[1]['team']
         if team is 'red':
             color = 1
         elif team is 'blue':
@@ -112,7 +114,7 @@ class rdamage(minqlx.Plugin):
             color = 7
 
         if damage > 0:
-            frags = n1player[1]['frags']
+            frags = leader[1]['frags']
             frags_msg = ''
             if frags > 0:
                 end = 'S' if frags > 1 else ''
