@@ -103,7 +103,7 @@ class rdamage(minqlx.Plugin):
         damage = self.allplayers[p.steam_id]['damage']
         if damage >= 0:
             frags_msg = ' ^3(AFK?)' if damage == 0 else frags_msg
-            self.msg('^1  {0:<15}^1: ^1{1:<5}{2}'
+            self.msg('^1  {0:<20}^1: ^1{1:<5}{2}'
                      .format(p.clean_name, self.allplayers[p.steam_id]['damage'], frags_msg))
 
     def summary_message(self, player_dict, text_prefix):
