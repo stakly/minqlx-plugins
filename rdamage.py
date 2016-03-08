@@ -7,7 +7,7 @@
 import minqlx
 from collections import defaultdict
 
-VERSION = 'v0.4'
+VERSION = '0.4'
 SUPPORTED_GAMETYPES = ('ca', 'dom', 'ft')
 
 
