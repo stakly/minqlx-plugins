@@ -65,6 +65,7 @@ class rdamage(minqlx.Plugin):
         red_end = teams['red'].copy()
         blue_end = teams['blue'].copy()
         self.msg("^3*** ROUND {} END ***".format(data['ROUND']))
+
         try:
             self.msg('^1RED SCORES: {}, PLAYERS ROUND DAMAGE:'.format(self.game.red_score))
             for p in red_end:
