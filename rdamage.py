@@ -7,7 +7,7 @@
 import minqlx
 from collections import defaultdict
 
-VERSION = 'v0.3'
+VERSION = 'v0.4'
 SUPPORTED_GAMETYPES = ('ca', 'dom', 'ft')
 
 
@@ -36,6 +36,7 @@ class rdamage(minqlx.Plugin):
         if not self.game_supported:
             return minqlx.RET_STOP
 
+        self.allplayers.clear()
         teams = self.teams()
         red_start = teams['red'].copy()
         blue_start = teams['blue'].copy()
@@ -76,13 +77,15 @@ class rdamage(minqlx.Plugin):
             self.msg('^1RED SCORES: {}, PLAYERS ROUND DAMAGE:'.format(self.game.red_score))
             for p in red_end:
                 frags = self.allplayers[p.steam_id]['frags']
-                frags_msg = ''
                 if frags > 0:
                     end = 'S' if frags > 1 else ''
                     frags_msg = ' ({} FRAG{})'.format(frags, end)
                 self.allplayers[p.steam_id]['damage'] = p.stats.damage_dealt-self.allplayers[p.steam_id]['damage']
-                if self.allplayers[p.steam_id]['damage'] >= 0:
-                    self.msg('^1  {0:<15} ^1: ^1{1}{2}'.format(p.clean_name, self.allplayers[p.steam_id]['damage'], frags_msg))
+                damage = self.allplayers[p.steam_id]['damage']
+                if damage >= 0:
+                    frags_msg = ' ^3(AFK?)' if damage == 0 else frags_msg
+                    self.msg('^1  {0:<15}^1: ^1{1:<5}{2}'
+                             .format(p.clean_name, self.allplayers[p.steam_id]['damage'], frags_msg))
         except AttributeError:
             return minqlx.RET_STOP
 
@@ -95,17 +98,23 @@ class rdamage(minqlx.Plugin):
                     end = 'S' if frags > 1 else ''
                     frags_msg = ' ({} FRAG{})'.format(frags, end)
                 self.allplayers[p.steam_id]['damage'] = p.stats.damage_dealt-self.allplayers[p.steam_id]['damage']
-                if self.allplayers[p.steam_id]['damage'] >= 0:
-                    self.msg('^4  {0:<15} ^4: ^4{1}{2}'.format(p.clean_name, self.allplayers[p.steam_id]['damage'], frags_msg))
+                damage = self.allplayers[p.steam_id]['damage']
+                if damage >= 0:
+                    frags_msg = ' ^3(AFK?)' if damage == 0 else frags_msg
+                    self.msg('^4  {0:<15}^4: ^4{1:<5}{2}'
+                             .format(p.clean_name, self.allplayers[p.steam_id]['damage'], frags_msg))
         except AttributeError:
             return minqlx.RET_STOP
 
-        leader = next(iter (sorted(self.allplayers.items(), key=lambda x: x[1]['damage'], reverse=True)))
-        self.allplayers.clear()
+        leader = next(iter(sorted(self.allplayers.items(), key=lambda x: x[1]['damage'], reverse=True)))
+        looser = next(iter(sorted(self.allplayers.items(), key=lambda x: x[1]['damage'])))
+        self.round_end_message(leader, 'MOST DAMAGE')
+        self.round_end_message(looser, 'LEAST DAMAGE')
 
-        nickname = leader[1]['name']
-        damage = leader[1]['damage']
-        team = leader[1]['team']
+    def round_end_message(self, player_dict, text_prefix):
+        nickname = player_dict[1]['name']
+        damage = player_dict[1]['damage']
+        team = player_dict[1]['team']
         if team is 'red':
             color = 1
         elif team is 'blue':
@@ -113,11 +122,11 @@ class rdamage(minqlx.Plugin):
         else:
             color = 7
 
-        if damage > 0:
-            frags = leader[1]['frags']
-            frags_msg = ''
+        if damage >= 0:
+            frags = player_dict[1]['frags']
+            frags_msg = ' ^3(AFK?)' if damage == 0 else ''
             if frags > 0:
                 end = 'S' if frags > 1 else ''
                 frags_msg = ' ^3WITH ^{}{} ^3FRAG{}'.format(color, frags, end)
-            self.msg('^3*** MOST DAMAGE ^{}{} ^3BY ^{}{}{} ^3***'
-                     .format(color, damage, color, nickname, frags_msg))
+            self.msg('^3*** {} ^{}{} ^3BY ^{}{}{} ^3***'
+                     .format(text_prefix, color, damage, color, nickname, frags_msg))
