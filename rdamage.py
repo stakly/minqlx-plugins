@@ -64,7 +64,7 @@ class rdamage(minqlx.Plugin):
         if not self.game_supported:
             return minqlx.RET_STOP
 
-        self.msg("^3*** ROUND {} END ***".format(data['ROUND']))
+        self.msg('^3*** ROUND {} END ***'.format(data['ROUND']))
         self.msg('^1RED SCORES: {}, PLAYERS ROUND DAMAGE:'.format(self.game.red_score))
         for p in self.red_team:
             self.team_message(p)
@@ -101,10 +101,10 @@ class rdamage(minqlx.Plugin):
                 self.msg('^1  {0:<20}^1: ^1{1:<5}{2}'
                          .format(p.clean_name, self.all_players[p.steam_id]['damage'], frags_msg))
         except AttributeError as e:
-            self.logger.error("AttributeError: {}".format(e))
+            self.logger.error('AttributeError: {}'.format(e))
             return
         except KeyError as e:
-            self.logger.error("KeyError: {}".format(e))
+            self.logger.error('KeyError: {}'.format(e))
             return
 
     def summary_message(self, player_dict, text_prefix):
@@ -128,8 +128,8 @@ class rdamage(minqlx.Plugin):
                 self.msg('^3*** {} ^{}{} ^3BY ^{}{}{} ^3***'
                          .format(text_prefix, color, damage, color, nickname, frags_msg))
         except AttributeError as e:
-            self.logger.error("AttributeError: {}".format(e))
+            self.logger.error('AttributeError: {}'.format(e))
             return
         except KeyError as e:
-            self.logger.error("KeyError: {}".format(e))
+            self.logger.error('KeyError: {}'.format(e))
             return
