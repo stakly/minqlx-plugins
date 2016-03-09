@@ -89,17 +89,26 @@ class rdamage(minqlx.Plugin):
     def team_message(self, player):
         p = player
         try:
+            team = self.all_players[p.steam_id]['team']
+            if team is 'red':
+                color = 1
+            elif team is 'blue':
+                color = 4
+            else:
+                color = 7
+
             frags = self.all_players[p.steam_id]['frags']
             frags_msg = ''
             if frags > 0:
                 end = 'S' if frags > 1 else ''
                 frags_msg = ' ({} FRAG{})'.format(frags, end)
+
             self.all_players[p.steam_id]['damage'] = p.stats.damage_dealt-self.all_players[p.steam_id]['damage']
             damage = self.all_players[p.steam_id]['damage']
             if damage >= 0:
                 frags_msg = ' ^3(AFK?)' if damage == 0 else frags_msg
-                self.msg('^1  {0:<20}^1: ^1{1:<5}{2}'
-                         .format(p.clean_name, self.all_players[p.steam_id]['damage'], frags_msg))
+                self.msg('^{color} {0:<20}^{color}: ^{color}{1:<5}{2}'
+                         .format(p.clean_name, self.all_players[p.steam_id]['damage'], frags_msg, color=color))
         except AttributeError as e:
             self.logger.error('AttributeError: {}'.format(e))
             return
@@ -108,28 +117,21 @@ class rdamage(minqlx.Plugin):
             return
 
     def summary_message(self, player_dict, text_prefix):
-        try:
-            nickname = player_dict[1]['name']
-            damage = player_dict[1]['damage']
-            team = player_dict[1]['team']
-            if team is 'red':
-                color = 1
-            elif team is 'blue':
-                color = 4
-            else:
-                color = 7
+        nickname = player_dict[1]['name']
+        damage = player_dict[1]['damage']
+        team = player_dict[1]['team']
+        if team is 'red':
+            color = 1
+        elif team is 'blue':
+            color = 4
+        else:
+            color = 7
 
-            if damage >= 0:
-                frags = player_dict[1]['frags']
-                frags_msg = ' ^3(AFK?)' if damage == 0 else ''
-                if frags > 0:
-                    end = 'S' if frags > 1 else ''
-                    frags_msg = ' ^3WITH ^{}{} ^3FRAG{}'.format(color, frags, end)
-                self.msg('^3*** {} ^{}{} ^3BY ^{}{}{} ^3***'
-                         .format(text_prefix, color, damage, color, nickname, frags_msg))
-        except AttributeError as e:
-            self.logger.error('AttributeError: {}'.format(e))
-            return
-        except KeyError as e:
-            self.logger.error('KeyError: {}'.format(e))
-            return
+        if damage >= 0:
+            frags = player_dict[1]['frags']
+            frags_msg = ' ^3(AFK?)' if damage == 0 else ''
+            if frags > 0:
+                end = 'S' if frags > 1 else ''
+                frags_msg = ' ^3WITH ^{}{} ^3FRAG{}'.format(color, frags, end)
+            self.msg('^3*** {} ^{color}{} ^3BY ^{color}{}{} ^3***'
+                     .format(text_prefix, damage, nickname, frags_msg, color=color))
