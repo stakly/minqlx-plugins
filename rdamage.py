@@ -73,18 +73,18 @@ class rdamage(minqlx.Plugin):
         for p in self.blue_team:
             self.team_message(p)
 
-        #self.logger.info("self.all_players={}".format(self.all_players))
+        # self.logger.info("self.all_players={}".format(self.all_players))
         leader = next(iter(sorted(self.all_players.items(), key=lambda x: x[1]['damage'], reverse=True)))
         looser = next(iter(sorted(self.all_players.items(), key=lambda x: x[1]['damage'])))
-        #self.logger.info("leader={}".format(leader))
+        # self.logger.info("leader={}".format(leader))
         self.summary_message(leader, 'MOST DAMAGE')
-        #self.logger.info("looser={}".format(looser))
+        # self.logger.info("looser={}".format(looser))
         self.summary_message(looser, 'LEAST DAMAGE')
 
     def fill_dict(self, player, team):
         p = player
         self.all_players[p.steam_id] = {}
-        #self.logger.info("p.clean_name={}".format(p.clean_name))
+        # self.logger.info("p.clean_name={}".format(p.clean_name))
         self.all_players[p.steam_id]['name'] = p.clean_name
         self.all_players[p.steam_id]['team'] = team
         self.all_players[p.steam_id]['damage'] = p.stats.damage_dealt
@@ -107,7 +107,7 @@ class rdamage(minqlx.Plugin):
                 end = 'S' if frags > 1 else ''
                 frags_msg = ' ({} FRAG{})'.format(frags, end)
 
-            self.all_players[p.steam_id]['damage'] = p.stats.damage_dealt-self.all_players[p.steam_id]['damage']
+            self.all_players[p.steam_id]['damage'] = p.stats.damage_dealt - self.all_players[p.steam_id]['damage']
             damage = self.all_players[p.steam_id]['damage']
             if damage >= 0:
                 frags_msg = ' ^3(AFK?)' if damage == 0 else frags_msg
@@ -121,7 +121,7 @@ class rdamage(minqlx.Plugin):
             return
 
     def summary_message(self, player_dict, text_prefix):
-        #self.logger.info("player_dict={}".format(player_dict))
+        # self.logger.info("player_dict={}".format(player_dict))
         nickname = player_dict[1]['name']
         damage = player_dict[1]['damage']
         team = player_dict[1]['team']
