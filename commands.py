@@ -1,12 +1,7 @@
-# This plugin created by stakly <root@qw3rty.org>
-# Copyright (c) 2016 stakly
-#
-# This plugin response permitted command list to player, based on currently loaded plugins in markdown
-
 import minqlx
+import os.path
 
-
-class Commands(minqlx.Plugin):
+class commands(minqlx.Plugin):
     def __init__(self):
         super().__init__()
         self.add_command("me", self.cmd_mycommands, permission=0)
@@ -39,15 +34,15 @@ class Commands(minqlx.Plugin):
                             out += "^1{}^3, ".format(name_alias)
                         out = out[:-2] + ")"
 
-                # Docstring.
-                if cmd.handler.__doc__:
-                    out += " ^3{}".format(cmd.handler.__doc__)
+                    # Docstring.
+                    if cmd.handler.__doc__:
+                        out += " ^3{}".format(cmd.handler.__doc__)
 
-                # Usage
-                if cmd.usage:
-                    out += "\n   ^3Использование: ^1{}^4 {}^3 \n".format(name, cmd.usage)
+                    # Usage
+                    if cmd.usage:
+                        out += "\n   ^3Использование: ^1{}^4 {}^3 \n".format(name, cmd.usage)
 
-                else:
-                    out += "\n"
-
+                    else:
+                        out += "\n"
+        
         player.tell(out)
