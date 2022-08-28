@@ -94,9 +94,9 @@ class rdamage(minqlx.Plugin):
         p = player
         try:
             team = self.all_players[p.steam_id]['team']
-            if team is 'red':
+            if team == 'red':
                 color = 1
-            elif team is 'blue':
+            elif team == 'blue':
                 color = 4
             else:
                 color = 7
@@ -125,9 +125,9 @@ class rdamage(minqlx.Plugin):
         nickname = player_dict[1]['name']
         damage = player_dict[1]['damage']
         team = player_dict[1]['team']
-        if team is 'red':
+        if team == 'red':
             color = 1
-        elif team is 'blue':
+        elif team == 'blue':
             color = 4
         else:
             color = 7
