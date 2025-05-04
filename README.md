@@ -9,3 +9,6 @@ Response permitted command list to player, based on currently loaded plugins in 
 
 - **rdamage:**
 Displays end round damage statistic and best round damager. Supported gametypes: clanarena, domination, freezetag
+
+- **netfilter:**
+Add support for IP white-listing of current players via netfilter (iptables) from ingame command. Useful if someone UDP-flooding server (DoS).
